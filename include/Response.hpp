@@ -1,0 +1,44 @@
+#ifndef RESPONSE_HPP
+#define RESPONSE_HPP
+
+#include <string>
+#include <map>
+
+class Response
+{
+private:
+
+    int statusCode;
+
+    std::string reasonPhrase;
+
+    std::map<std::string, std::string> headers;
+
+    std::string body;
+
+public:
+
+    Response();
+    ~Response();
+
+    // Status
+    void setStatusCode(int code);
+    int getStatusCode() const;
+
+    void setReasonPhrase(const std::string& reason);
+    const std::string& getReasonPhrase() const;
+
+    // Headers
+    void addHeader(const std::string& key,
+                   const std::string& value);
+
+    const std::map<std::string,
+                   std::string>& getHeaders() const;
+
+    // Body
+    void setBody(const std::string& content);
+
+    const std::string& getBody() const;
+};
+
+#endif
