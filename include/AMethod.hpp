@@ -1,6 +1,7 @@
 #ifndef AMETHOD_HPP
 #define AMETHOD_HPP
 
+
 #include "Response.hpp"
 #include "HttpRequest.hpp"
 
