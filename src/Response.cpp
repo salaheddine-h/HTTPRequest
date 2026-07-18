@@ -39,14 +39,14 @@ const std::map<std::string, std::string>& Response::getHeaders() const
     return headers;
 }
 
-void    Response::setBody(const std::string& content)
+void Response::setBody(const std::string& content)
 {
     body = content;
-}
 
-const std::string& Response::getBody() const
-{
-    return body;
+    std::ostringstream oss;
+    oss << body.size();
+
+    headers["Content-Length"] = oss.str();
 }
 
 std::string Response::toString() const

@@ -11,6 +11,7 @@ class HttpRequest
         std::string path;
         std::string version;
         std::map<std::string, std::string> headers;
+        std::string body;
 };
 
 #endif

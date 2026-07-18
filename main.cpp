@@ -1,29 +1,29 @@
-#include "include/HttpRequest.hpp"
-#include "include/GET.hpp"
-#include "include/POST.hpp"
 #include "include/DeleteMethod.hpp"
 
 #include <iostream>
 
-
-int main()
+void testDELETE(const std::string& path)
 {
     HttpRequest request;
 
-    request.method = "GET";
-    request.path = "./www/index.html";
+    request.method = "DELETE";
+    request.path = path;
     request.version = "HTTP/1.1";
-
     request.headers["Host"] = "localhost";
-    request.headers["Connection"] = "keep-alive";
 
-    AMethod* method = new GET();
+    DeleteMethod method;
 
-    Response response = method->execute(request);
+    Response response = method.execute(request);
 
-    std::cout << "========== RAW HTTP RESPONSE ==========\n";
+    std::cout << "=========================================\n";
+    std::cout << "DELETE \"" << path << "\"\n";
     std::cout << response.toString() << std::endl;
-    std::cout << "=======================================\n";
+}
 
-    delete method;
+int main()
+{
+    // Test: Empty path -> 400 Bad Request
+    testDELETE("");
+
+    return 0;
 }
