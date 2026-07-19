@@ -18,6 +18,7 @@ class Response
         Response();
         ~Response();
 
+        // void    Response::MethodFactory();
         std::string toString() const;
         void setStatusCode(int code);
         int getStatusCode() const;

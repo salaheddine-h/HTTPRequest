@@ -121,6 +121,7 @@ Response GET::execute(const HttpRequest& request)
 {
     std::string target = resolveTarget(request);
 
+    std::string path = target;
     if (path.empty())
         return buildErrorResponse(400, "Bad Request");
     switch (getPathType(target))
