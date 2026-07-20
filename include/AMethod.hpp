@@ -6,6 +6,9 @@
 #include "PathType.hpp"
 // #include "MultipartUploadStrategy.hpp"
 
+#include <iostream>
+#include <cstdio>
+#include <unistd.h>
 #include <sys/stat.h>
 
 class AMethod

@@ -37,10 +37,24 @@ Response AMethod::buildErrorResponse(int statusCode, const std::string& message)
     return response;
 }
 
+// std::string AMethod::resolveTarget(const HttpRequest& request) const
+// {
+//     return request.path;
+// }
+
 std::string AMethod::resolveTarget(const HttpRequest& request) const
 {
-    return request.path;
+    const std::string root = "./www";
+
+    if (request.path.empty())
+        return root;
+
+    if (request.path[0] == '/')
+        return root + request.path;
+
+    return root + "/" + request.path;
 }
+
 
 
 PathType AMethod::getPathType(const std::string& path) const

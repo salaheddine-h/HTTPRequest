@@ -6,11 +6,7 @@
 #include "PathType.hpp"
 #include "HttpRequest.hpp"
 
-#include <sys/stat.h>
-#include <iostream>
-#include <cstdio>
-#include <unistd.h>
-#include <cstdlib>
+
 
 class DeleteMethod : public AMethod
 {
