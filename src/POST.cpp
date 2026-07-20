@@ -9,28 +9,6 @@ POST::~POST()
 {
 }
 
-// bool POST::isMultipartUpload(const HttpRequest& request) const
-// {
-//     if (request.headers.find("Content-Type") == request.headers.end())
-//         return false;
-
-//     std::string contentType = request.headers.at("Content-Type");
-
-//     size_t position = contentType.find("multipart/form-data");
-
-//     if (position == std::string::npos)
-//         return false;
-
-//     return true;
-// }
-
-// Response POST::handleMultipartUpload(const HttpRequest& request) const
-// {
-//     if (!isMultipartUpload(request))
-//         return Response(); // Not a multipart upload, return an empty response
-//     return Response();
-// }
-
 
 std::string POST::getParentDirectory(const std::string& target) const
 {
@@ -65,15 +43,18 @@ Response POST::buildCreatedResponse(int statusCode, const std::string& message) 
 
 bool POST::saveBody(const std::string& path, const std::string& body) const
 {
-    std::ofstream file(path.c_str());
+    // std::ofstream file(path.c_str());
+    std::ofstream file(path.c_str(), std::ios::binary | std::ios::trunc);
 
     if (!file.is_open())
         return false;
 
-    file << body;
-    file.close();
+    file.write(body.data(),
+           static_cast<std::streamsize>(body.size()));
+    bool success = file.good();
 
-    return true;
+    file.close();
+    return success;
 }
 
 bool POST::validateParentDirectory(const std::string& target) const
@@ -88,20 +69,16 @@ Response POST::execute(const HttpRequest& request)
 {
     if (request.path.empty())
         return buildErrorResponse(400, "Bad Request");
+    if (multiPart.isMultipartUpload(request))
+        return multiPart.handleMultipartUpload(request);
 
-    MultipartUploadStrategy strategy;
-    if (strategy.isMultipartUpload(request))
-        return strategy.handleMultipartUpload(request);
     std::string target = resolveTarget(request);
 
     if (!validateParentDirectory(target))
         return buildErrorResponse(404, "Not Found");
-
     if (!canWrite(target))
         return buildErrorResponse(403, "Forbidden");
-
     if (!saveBody(target, request.body))
         return buildErrorResponse(500, "Internal Server Error");
-
     return buildCreatedResponse(201, "Created");
 }

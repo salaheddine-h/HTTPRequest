@@ -13,11 +13,12 @@
 class POST : public AMethod
 {
     private:
+        MultipartUploadStrategy multiPart;
+        Response buildCreatedResponse(int status,const std::string& message) const;
+        std::string getParentDirectory(const std::string& target) const;
         bool canWrite(const std::string& path) const;
         bool validateParentDirectory(const std::string& target) const;
         bool saveBody(const std::string& path, const std::string& body) const;
-        Response buildCreatedResponse(int status,const std::string& message) const;
-        std::string getParentDirectory(const std::string& target) const;
     public:
         POST();
         virtual ~POST();
