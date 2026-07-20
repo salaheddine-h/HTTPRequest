@@ -9,6 +9,29 @@ POST::~POST()
 {
 }
 
+// bool POST::isMultipartUpload(const HttpRequest& request) const
+// {
+//     if (request.headers.find("Content-Type") == request.headers.end())
+//         return false;
+
+//     std::string contentType = request.headers.at("Content-Type");
+
+//     size_t position = contentType.find("multipart/form-data");
+
+//     if (position == std::string::npos)
+//         return false;
+
+//     return true;
+// }
+
+// Response POST::handleMultipartUpload(const HttpRequest& request) const
+// {
+//     if (!isMultipartUpload(request))
+//         return Response(); // Not a multipart upload, return an empty response
+//     return Response();
+// }
+
+
 std::string POST::getParentDirectory(const std::string& target) const
 {
     size_t pos = target.find_last_of('/');
@@ -66,6 +89,9 @@ Response POST::execute(const HttpRequest& request)
     if (request.path.empty())
         return buildErrorResponse(400, "Bad Request");
 
+    MultipartUploadStrategy strategy;
+    if (strategy.isMultipartUpload(request))
+        return strategy.handleMultipartUpload(request);
     std::string target = resolveTarget(request);
 
     if (!validateParentDirectory(target))

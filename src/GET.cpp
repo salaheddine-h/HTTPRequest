@@ -47,6 +47,13 @@ std::string GET::getContentType(const std::string& path) const
         return "image/jpeg";
     else if (extension == "gif")
         return "image/gif";
+    //else  if(extension == "pdf")
+    //     return "application/pdf";
+    // else if(extension == "xml")
+    //     return "application/xml";
+    // else if(extension == "zip")
+    //     return "application/zip";
+        
 
     return "application/octet-stream";
 }

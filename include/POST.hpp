@@ -5,6 +5,7 @@
 #include "Response.hpp"
 #include "PathType.hpp"
 #include "HttpRequest.hpp"
+#include "MultipartUploadStrategy.hpp"
 #include <sys/stat.h>
 #include <fstream>
 #include <unistd.h>
@@ -17,7 +18,6 @@ class POST : public AMethod
         bool saveBody(const std::string& path, const std::string& body) const;
         Response buildCreatedResponse(int status,const std::string& message) const;
         std::string getParentDirectory(const std::string& target) const;
-
     public:
         POST();
         virtual ~POST();

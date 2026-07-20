@@ -27,11 +27,21 @@ int main()
 {
     HttpRequest request;
 
-    request.method = "DELETE";
+    request.method = "POST";
     request.path = "./uploads/test.txt";
+    request.version = "HTTP/1.1";
+    request.body =
+    "------WebKitXYZ\r\n"
+    "Content-Disposition: form-data; name=\"photo\"; filename=\"cat.png\"\r\n"
+    "Content-Type: image/png\r\n"
+    "\r\n"
+    "HELLO_IMAGE_CONTENT\r\n"
+    "------WebKitXYZ--\r\n";
+    // request.headers["Content-Type"] = "text/plain";
+    request.headers["Content-Type"] = "multipart/form-data; boundary=----WebKitXYZ";
 
     AMethod* method = MethodFactory::createMethod(request);
-{
+
     if (method == NULL)
     {
         Response response;

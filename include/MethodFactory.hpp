@@ -9,8 +9,8 @@
 
 class MethodFactory
 {
-    public:
-        static AMethod* createMethod(const HttpRequest& request);
+public:
+    static AMethod* createMethod(const HttpRequest& request);
 };
 
 #endif
