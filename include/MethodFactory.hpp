@@ -7,10 +7,13 @@
 #include "DeleteMethod.hpp"
 #include "HttpRequest.hpp"
 
+// class Server_block;
+
 class MethodFactory
 {
-public:
-    static AMethod* createMethod(const HttpRequest& request);
+    public:
+        // Server_block* Getserverblock();
+        static AMethod* createMethod(const HttpRequest& request);
 };
 
 #endif

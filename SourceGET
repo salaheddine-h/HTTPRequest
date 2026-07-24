@@ -1,0 +1,99 @@
+==========================
+GET METHOD
+==========================
+
+Mission
+--------
+
+GET howa responsible 3la reading resources.
+
+Cases
+
+✓ file exists
+
+✓ directory
+
+✓ autoindex
+
+✓ index.html
+
+✓ forbidden
+
+✓ not found
+
+✓ CGI
+
+✓ redirect
+
+Flow
+
+Browser
+
+↓
+
+GET::execute()
+
+↓
+
+resolve path
+
+↓
+
+stat()
+
+↓
+
+Directory ?
+
+↓
+
+File ?
+
+↓
+
+CGI ?
+
+↓
+
+Response
+
+Helpers
+
+fileExists()
+
+readFile()
+
+buildSuccessResponse()
+
+buildErrorResponse()
+
+getContentType()
+
+...
+
+Possible HTTP codes
+
+200 OK
+
+301
+
+302
+
+403
+
+404
+
+405
+
+500
+
+...
+
+Architecture Review
+
+Strengths
+
+Weaknesses
+
+Possible improvements
+

@@ -1,0 +1,42 @@
+Mission
+
+Delete resource
+
+Cases
+
+File
+
+Directory
+
+Forbidden
+
+Not found
+
+CGI
+
+...
+
+Flow
+
+DELETE::execute()
+
+↓
+
+Resolve Path
+
+↓
+
+Exists?
+
+↓
+
+Permission?
+
+↓
+
+unlink()
+
+↓
+
+Response
+

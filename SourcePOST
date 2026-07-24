@@ -1,0 +1,82 @@
+Mission
+
+Create resource.
+
+Cases
+
+multipart
+
+urlencoded
+
+plain body
+
+CGI
+
+upload
+
+chunked
+
+...
+
+Flow
+
+Request
+
+↓
+
+Resolve upload path
+
+↓
+
+CGI ?
+
+↓
+
+Multipart ?
+
+↓
+
+Normal body ?
+
+↓
+
+Store file
+
+↓
+
+Response
+
+Helpers
+
+extractBoundary()
+
+parseNextPart()
+
+saveUploadedFile()
+
+sanitizeFilename()
+
+...
+
+Status Codes
+
+201
+
+204
+
+400
+
+403
+
+404
+
+409
+
+413
+
+415
+
+500
+
+507
+

@@ -13,3 +13,5 @@ AMethod* MethodFactory::createMethod(const HttpRequest& request)
 
     return NULL;
 }
+
+// server_block    MethodFactory::Getserverblock()

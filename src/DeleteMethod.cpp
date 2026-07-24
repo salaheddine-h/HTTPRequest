@@ -25,12 +25,12 @@ Response DeleteMethod::buildNoContentResponse() const
     return response;
 }
 
-Response DeleteMethod::execute(const HttpRequest& request)
+Response DeleteMethod::execute(const HttpRequest& request,const Server_block& server,const Location_Config* location)
 {
     if (request.path.empty())
         return buildErrorResponse(400, "Bad Request");
 
-    std::string target = resolveTarget(request);
+    std::string target = resolveTarget(request, server, location);
 
     if (!fileExists(target))
         return buildErrorResponse(404, "Not Found");

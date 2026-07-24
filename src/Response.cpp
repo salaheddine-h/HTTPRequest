@@ -49,6 +49,11 @@ void Response::setBody(const std::string& content)
     headers["Content-Length"] = oss.str();
 }
 
+const std::string& Response::getBody() const
+{
+    return body;
+}
+
 std::string Response::toString() const
 {
     std::ostringstream out;

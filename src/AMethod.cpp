@@ -1,9 +1,9 @@
 #include "AMethod.hpp"
+#include "../multiplexing/header.hpp"
 
 AMethod::~AMethod()
 {
 }
-
 
 Response AMethod::buildErrorResponse(int statusCode, const std::string& message) const
 {
@@ -37,28 +37,20 @@ Response AMethod::buildErrorResponse(int statusCode, const std::string& message)
     return response;
 }
 
-// std::string AMethod::resolveTarget(const HttpRequest& request) const
-// {
-//     return request.path;
-// }
 
-std::string AMethod::resolveTarget(const HttpRequest& request) const
+std::string AMethod::resolveTarget(const HttpRequest& request,const Server_block& server,const Location_Config* location) const
 {
-    const std::string root = "./www";
+    std::string root = server.root;
 
-    if (request.path.empty())
-        return root;
+    if (location && !location->root.empty())
+        root = location->root;
 
-    if (request.path[0] == '/')
-        return root + request.path;
-
-    return root + "/" + request.path;
+    return root + request.path;
 }
-
-
 
 PathType AMethod::getPathType(const std::string& path) const
 {
+    
     if (fileExists(path))
     {
         if (isDirectory(path))

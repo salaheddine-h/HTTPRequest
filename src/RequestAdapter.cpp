@@ -12,3 +12,5 @@ HttpRequest RequestAdapter::toHttpRequest(const ClientRequest& client)
 
     return request;
 }
+
+// RequestAdapter::RequestAdapter(Server_block* server_block) : server_block(server_block) {}

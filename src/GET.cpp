@@ -1,4 +1,5 @@
 #include "GET.hpp"
+#include "../multiplexing/header.hpp"
 
 GET::GET()
 {
@@ -8,19 +9,6 @@ GET::~GET()
 {
 }
 
-
-std::string GET::readFile(const std::string& path) const
-{
-    std::ifstream file(path.c_str());
-
-    if (!file.is_open())
-        throw std::runtime_error("Could not open file.");
-
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-
-    return buffer.str();
-}
 
 std::string GET::getContentType(const std::string& path) const
 {
@@ -47,43 +35,84 @@ std::string GET::getContentType(const std::string& path) const
         return "image/jpeg";
     else if (extension == "gif")
         return "image/gif";
-    //else  if(extension == "pdf")
-    //     return "application/pdf";
-    // else if(extension == "xml")
-    //     return "application/xml";
-    // else if(extension == "zip")
-    //     return "application/zip";
-        
 
     return "application/octet-stream";
 }
 
-Response GET::serveFile(const std::string& path) const
+std::string GET::readFile(const std::string& path, bool& success) const
 {
-    try
-    {
-        std::string body = readFile(path);
-        std::string type = getContentType(path);
+    std::ifstream file(path.c_str(), std::ios::binary);
 
-        return buildFileResponse(body, type);
-    }
-    catch (const std::exception& e)
+    if (!file.is_open())
     {
-        std::cerr << e.what() << std::endl;
-        return buildErrorResponse(500, "Internal Server Error");
+        success = false;
+        return "";
     }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+
+    success = true;
+    return buffer.str();
 }
 
-Response GET::handleDirectory(const std::string& path) const
+Response GET::serveFile(const std::string& path) const
 {
-    std::string indexPath = path + "/index.html";
+    bool success = false;
+    std::string body = readFile(path, success);
 
-    if (fileExists(indexPath))
-        return serveFile(indexPath);
+    if (!success)
+        return buildErrorResponse(500, "Internal Server Error");
 
-    std::string html = generateAutoIndex(path);
+    std::string type = getContentType(path);
 
-    return buildFileResponse(html, "text/html");
+    return buildFileResponse(body, type);
+}
+
+std::vector<std::string> GET::resolveIndexFiles(const Server_block& server, const Location_Config* location) const
+{
+    if (location != NULL && location->has_index && !location->index_files.empty())
+        return location->index_files;
+
+    return server.index_files;
+}
+
+bool GET::isAutoindexEnabled(const Server_block& server, const Location_Config* location) const
+{
+    if (location != NULL && location->has_autoindex)
+        return location->autoindex == "on";
+
+    return server.autoindex == "on";
+}
+
+Response GET::handleDirectory(const std::string& path, const Server_block& server, const Location_Config* location) const
+{
+    std::vector<std::string> indexFiles = resolveIndexFiles(server, location);
+
+    for (size_t i = 0; i < indexFiles.size(); i++)
+    {
+        std::string candidatePath = path;
+
+        if (!candidatePath.empty() && candidatePath[candidatePath.length() - 1] != '/')
+            candidatePath += "/";
+
+        candidatePath += indexFiles[i];
+
+        if (fileExists(candidatePath) && !isDirectory(candidatePath))
+            return serveFile(candidatePath);
+    }
+
+    if (isAutoindexEnabled(server, location))
+    {
+        std::string html = generateAutoIndex(path);
+
+        if (html.empty())
+            return buildErrorResponse(500, "Internal Server Error");
+
+        return buildFileResponse(html, "text/html");
+    }
+
+    return buildErrorResponse(403, "Forbidden");
 }
 
 std::string GET::generateAutoIndex(const std::string& path) const
@@ -106,30 +135,23 @@ std::string GET::generateAutoIndex(const std::string& path) const
     return html.str();
 }
 
-Response GET::buildFileResponse(const std::string& body,const std::string& contentType) const
+Response GET::buildFileResponse(const std::string& body, const std::string& contentType) const
 {
     Response response;
 
     response.setStatusCode(200);
     response.setReasonPhrase("OK");
-    response.setBody(body);
-
+    response.setBody(body);               // Hadi automatically katdir Content-Length
     response.addHeader("Content-Type", contentType);
-
-    std::ostringstream oss;
-    oss << body.size();
-
-    response.addHeader("Content-Length", oss.str());
 
     return response;
 }
 
-Response GET::execute(const HttpRequest& request)
+Response GET::execute(const HttpRequest& request, const Server_block& server, const Location_Config* location)
 {
-    std::string target = resolveTarget(request);
+    std::string target = resolveTarget(request, server, location);
 
-    std::string path = target;
-    if (path.empty())
+    if (target.empty())
         return buildErrorResponse(400, "Bad Request");
     switch (getPathType(target))
     {
@@ -140,7 +162,7 @@ Response GET::execute(const HttpRequest& request)
             return serveFile(target);
 
         case DIRECTORY_PATH:
-            return handleDirectory(target);
+            return handleDirectory(target, server, location);
         default:
             return buildErrorResponse(500, "Internal Server Error");
     }

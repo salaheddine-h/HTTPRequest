@@ -14,19 +14,16 @@
 #include <iostream>
 #include <stdexcept>
 #include <sys/stat.h>
+#include <vector>
 
 
 class GET : public AMethod
 {
     private:
-        // Utilities
-        // bool fileExists(const std::string& path) const;
-        // bool isDirectory(const std::string& path) const;
-        std::string readFile(const std::string& path) const;
+        std::string readFile(const std::string& path, bool& success) const;
         std::string getContentType(const std::string& path) const;
-        // Internal handlers
         Response serveFile(const std::string& path) const;
-        Response handleDirectory(const std::string& path) const;
+        Response handleDirectory(const std::string& path,const Server_block& server,const Location_Config* location) const;
         std::string generateAutoIndex(const std::string& path) const;
         void    buildAutoIndexHeader(std::ostringstream& html,const std::string& path) const;
         void    buildAutoIndexFooter(std::ostringstream& html) const;
@@ -36,13 +33,16 @@ class GET : public AMethod
         void    appendDirectoryLink(std::ostringstream& html,const std::string& name) const;
         void    appendFileLink(std::ostringstream& html,const std::string& name) const;
         Response buildFileResponse(const std::string& body,const std::string& contentType) const;
+        std::vector<std::string> resolveIndexFiles(const Server_block& server, const Location_Config* location) const;
+        bool isAutoindexEnabled(const Server_block& server, const Location_Config* location) const;
 
 
     public:
         GET();
         virtual ~GET();
 
-        virtual Response execute(const HttpRequest& request);
+        virtual Response execute(const HttpRequest& request,const Server_block& server,const Location_Config* location);
+        // virtual Response execute(const HttpRequest& request);
 };
 
 
